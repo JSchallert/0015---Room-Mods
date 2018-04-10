@@ -2,17 +2,16 @@
 //Author: Jonathan Schallert
 //Date: 4/8/2018
 
-#include "LowPower.h"
-#define DIR 5
-#define STEP 4
-#define TRIGGER 6
+#define DIR 2
+#define STEP 3
+#define TRIGGER 4
 int stepsPerRot = 200;
 bool deployed = false;
 bool stepDirection = true;
 bool stepping = false;
 int totalSteps = 1000;
 int brokenSteps = 0;
-int constSpeed = 2;
+int constSpeed = 1;
 
 void setup() {
   Serial.begin(38400);
@@ -38,18 +37,18 @@ void stepCustom(float timeDelay){
   Serial.println(brokenSteps);
 }
 
-void screenDeploy(bool stepdir){
-  int i;
-  float timescale = map(i,0,totalSteps,
-  for(i=0;i<totalSteps;i++){
-    timescale = sqrt(totalSteps);
+void screenDeploy(){
+  float timescale;
+  for(int i=0;i<totalSteps;i++){
+    timescale = constSpeed;
     stepCustom(timescale);
-    if(TRIGGER){
+    if(digitalRead(TRIGGER)){
       Serial.println("Stopped!");
       break;}
   }
   stepping = false;
   Serial.println("Resetting...");
+  Serial.print("Loop broke at:");
   Serial.println(brokenSteps);
   delay(250);
 }
@@ -60,19 +59,30 @@ void zero(int steps){
     Serial.println("Retracting");
     for (int i = 0;i<steps;i++){
       stepCustom(constSpeed);}
+    reverse();
   }else{
     Serial.println("Redeploying...");
     for (int i = steps;i!=totalSteps;i++){
-      stepCustom(constSpeed);}}
+      stepCustom(constSpeed);}
+    reverse();}
+}
+
+bool trigger(){
+  bool x = digitalRead(TRIGGER);
+  Serial.print("TRIGGER: ");
+  Serial.print(x);
+  Serial.print("  STEPS: ");
+  Serial.println(brokenSteps);
+  return x;
 }
 
 void loop() {
-  if(TRIGGER){
+  bool trig = trigger();
+  if(trig){
+    delay(200);
     if(brokenSteps!=0 && !stepping){
-      zero(brokenSteps);}
-    else if(deployed){
-      screenDeploy(deployed);}
-    else{
-      screenDeploy(deployed);}
+      zero(brokenSteps);
+    }else{
+      screenDeploy();}
   }
 }
