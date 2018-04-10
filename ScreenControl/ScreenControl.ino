@@ -12,6 +12,7 @@ bool stepDirection = true;
 bool stepping = false;
 int totalSteps = 1000;
 int brokenSteps = 0;
+int constSpeed = 2;
 
 void setup() {
   Serial.begin(38400);
@@ -34,11 +35,13 @@ void stepCustom(float timeDelay){
     brokenSteps+=1;
   }else{
     brokenSteps-=1;}
+  Serial.println(brokenSteps);
 }
 
 void screenDeploy(bool stepdir){
-  float timescale;
-  for(int i=0,i<totalSteps,i++){
+  int i;
+  float timescale = map(i,0,totalSteps,
+  for(i=0;i<totalSteps;i++){
     timescale = sqrt(totalSteps);
     stepCustom(timescale);
     if(TRIGGER){
@@ -54,16 +57,18 @@ void screenDeploy(bool stepdir){
 void zero(int steps){
   reverse();
   if(!stepDirection){
+    Serial.println("Retracting");
     for (int i = 0;i<steps;i++){
-      stepCustom(4);}
+      stepCustom(constSpeed);}
   }else{
+    Serial.println("Redeploying...");
     for (int i = steps;i!=totalSteps;i++){
-      stepCustom(4);}}
+      stepCustom(constSpeed);}}
 }
 
 void loop() {
   if(TRIGGER){
-    if(brokenSteps != 0){
+    if(brokenSteps!=0 && !stepping){
       zero(brokenSteps);}
     else if(deployed){
       screenDeploy(deployed);}
