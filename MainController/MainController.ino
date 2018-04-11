@@ -4,16 +4,17 @@
 //Screen Control added 4/10/18
 
 #include <Servo.h>
+#include "LowPower.h"
 
 //Inputs from Main Controller
 #define GREEN  9
 #define YELLOW 10
 #define RED    11
 #define BLUE   12
-#define GRNLED A5
-#define YLWLED A3
-#define REDLED A2
-#define BLULED A0
+#define GRNOUT A5
+#define YLWOUT A3
+#define REDOUT A2
+#define BLUOUT A0
 int grn; int ylw;
 int red; int blu;
 
@@ -41,10 +42,10 @@ void enableButtons() {
   pinMode(BLUE,   INPUT);}
 
 void enableAnalogOuts(){
-  pinMode(GRNLED, OUTPUT);
-  pinMode(YLWLED, OUTPUT);
-  pinMode(REDLED, OUTPUT);
-  pinMode(BLULED, OUTPUT);}
+  pinMode(GRNOUT, OUTPUT);
+  pinMode(YLWOUT, OUTPUT);
+  pinMode(REDOUT, OUTPUT);
+  pinMode(BLUOUT, OUTPUT);}
 
 void enableScreenStepper(){
   pinMode(DIR,OUTPUT);

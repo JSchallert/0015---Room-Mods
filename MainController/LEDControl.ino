@@ -7,28 +7,28 @@ void ledControl(String state){
   
 void grnLED(String state){
   if (state[0] == '1'){
-    analogWrite(GRNLED, 255);
+    analogWrite(GRNOUT, 255);
   }else{
-    analogWrite(GRNLED, 0);
+    analogWrite(GRNOUT, 0);
   }}
   
 void ylwLED(String state){
   if (state[1] == '1'){
-    analogWrite(YLWLED, 255);
+    analogWrite(YLWOUT, 255);
   }else{
-    analogWrite(YLWLED, 0);
+    analogWrite(YLWOUT, 0);
   }}
   
 void redLED(String state){
   if (state[2] == '1'){
-    analogWrite(REDLED, 255);
+    analogWrite(REDOUT, 255);
   }else{
-    analogWrite(REDLED, 0);
+    analogWrite(REDOUT, 0);
   }}
   
 void bluLED(String state){
   if (state[3] == '1'){
-    analogWrite(BLULED, 255);
+    analogWrite(BLUOUT, 255);
   }else{
-    analogWrite(BLULED, 0);
+    analogWrite(BLUOUT, 0);
   }}
