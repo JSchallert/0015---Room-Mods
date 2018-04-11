@@ -1,22 +1,25 @@
 //Screen Control
 //Author: Jonathan Schallert
 //Date: 4/8/2018
-
+//Uses some button to take user input to a stepper
+//controlling its state between two positions
 #define DIR 2
 #define STEP 3
+#define POWER 5
 #define TRIGGER 4
-int stepsPerRot = 200;
 bool deployed = false;
 bool stepDirection = true;
 bool stepping = false;
 int totalSteps = 1000;
 int brokenSteps = 0;
 int constSpeed = 1;
+int trigBufferMillis = 250;
 
 void setup() {
   Serial.begin(38400);
   pinMode(DIR,OUTPUT);
   pinMode(STEP,OUTPUT);
+  pinMode(POWER,OUTPUT);
   pinMode(TRIGGER,INPUT);
   digitalWrite(STEP,stepDirection);}
 
@@ -41,6 +44,7 @@ void screenDeploy(){
   float timescale;
   for(int i=0;i<totalSteps;i++){
     timescale = constSpeed;
+    //rewrite to be some function of the step number
     stepCustom(timescale);
     if(digitalRead(TRIGGER)){
       Serial.println("Stopped!");
@@ -50,7 +54,7 @@ void screenDeploy(){
   Serial.println("Resetting...");
   Serial.print("Loop broke at:");
   Serial.println(brokenSteps);
-  delay(250);
+  delay(trigBufferMillis);
 }
 
 void zero(int steps){
@@ -68,21 +72,23 @@ void zero(int steps){
 }
 
 bool trigger(){
-  bool x = digitalRead(TRIGGER);
+  bool trigread = digitalRead(TRIGGER);
   Serial.print("TRIGGER: ");
-  Serial.print(x);
+  Serial.print(trigread);
   Serial.print("  STEPS: ");
   Serial.println(brokenSteps);
-  return x;
+  return trigread;
 }
 
 void loop() {
   bool trig = trigger();
   if(trig){
-    delay(200);
+    digitalWrite(POWER,HIGH);
+    delay(trigBufferMillis);
     if(brokenSteps!=0 && !stepping){
       zero(brokenSteps);
     }else{
       screenDeploy();}
+    digitalWrite(POWER,LOW);
   }
 }

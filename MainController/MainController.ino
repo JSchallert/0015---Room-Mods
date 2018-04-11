@@ -1,8 +1,11 @@
-//Main Controller or something
+//Main Controller
 //Author: Jonathan Schallert
 //Started 3/1/18
+//Screen Control added 4/10/18
+
 #include <Servo.h>
-//Inputs
+
+//Inputs from Main Controller
 #define GREEN  9
 #define YELLOW 10
 #define RED    11
@@ -11,11 +14,25 @@
 #define YLWLED A3
 #define REDLED A2
 #define BLULED A0
-#define POTPIN A4
 int grn; int ylw;
 int red; int blu;
+
+//BassControl Variables
+#define POTPIN A4
 Servo bass;
 int servoVal;
+
+//ScreenControl Variables
+#define DIR 2
+#define STEP 3
+#define POWER 4
+bool deployed = false;
+bool stepDirection = true;
+bool stepping = false;
+int totalSteps = 1000;
+int brokenSteps = 0;
+int constSpeed = 1;
+int trigBufferMillis = 250;
 
 void enableButtons() {
   pinMode(GREEN,  INPUT);
@@ -27,14 +44,24 @@ void enableAnalogOuts(){
   pinMode(GRNLED, OUTPUT);
   pinMode(YLWLED, OUTPUT);
   pinMode(REDLED, OUTPUT);
-  pinMode(BLULED, OUTPUT);
-}
+  pinMode(BLULED, OUTPUT);}
+
+void enableScreenStepper(){
+  pinMode(DIR,OUTPUT);
+  pinMode(STEP,OUTPUT);
+  pinMode(POWER,OUTPUT);
+  //need the POWER out to control transistor, limit current
+  //and limit overheating of stepper driver
+  }
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(38400);
+  //a bit arbitrary but it should be somewhat fast
   delay(5000);
   enableButtons();
   enableAnalogOuts();
+  enableScreenStepper();
+  digitalWrite(STEP,stepDirection); //starts the stepper with an initial direction
   bass.attach(2);  // attaches the servo on pin 2 to the servo object
 }
 
@@ -46,5 +73,6 @@ void loop() {
   String state = (String)grn + ylw + red + blu;
   ledControl(state);
   bassControl();
+  screenControl(state);
 }
 
